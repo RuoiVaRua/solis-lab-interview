@@ -1,0 +1,137 @@
+/* fixed size variables for perfect pixel requirement */
+:root {
+	--title-line-height: 21.6px;
+	--xmark-size: 12.63px;
+	--open-text-line-height: 22.4px;
+}
+
+/* general css -- start */
+* {
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box; /* Firefox, other Gecko */
+	box-sizing: border-box; /* Opera/IE 8+ */
+	padding: 0px;
+	margin: 0px;
+
+	font-family: "Open Sans", serif;
+	font-optical-sizing: auto;
+	font-style: normal;
+	letter-spacing: 0px;
+	line-height: 22px;
+	color: #000;
+}
+
+html,
+body {
+	height: 100%;
+	width: 100%;
+	font-size: 16px;
+	overflow: hidden;
+	background-color: #e5e5e5;
+
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+button {
+	border: none;
+	outline: none;
+	background-color: transparent;
+}
+
+button:hover {
+	cursor: pointer;
+}
+/* general css -- end */
+
+.accordion,
+.accordion__block {
+	display: flex;
+	flex-direction: column;
+}
+
+.accordion {
+	max-width: 720px;
+	row-gap: 20px;
+}
+
+.accordion__block {
+	padding: 24px;
+	background-color: #fff;
+}
+
+.accordion__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.accordion__title {
+	font-weight: 700;
+	font-size: 18px;
+	color: #000;
+	/* line-height: 22px; */
+	line-height: var(--title-line-height); /* for perfect pixel requirement */
+}
+
+.accordion__text {
+	font-weight: 400;
+	font-size: 16px;
+	color: #3c3c43;
+	line-height: 0px;
+	visibility: hidden;
+	opacity: 0;
+	transition: all ease 0.4s;
+}
+
+.accordion__xmark {
+	width: 24px;
+	aspect-ratio: 1 / 1;
+
+	position: relative;
+}
+
+.accordion__xmark::before,
+.accordion__xmark::after {
+	content: "";
+	background-color: #000;
+	transition: all ease 0.4s;
+
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.accordion__xmark::before {
+	width: 2px;
+	/* height: 50%; */
+	height: var(--xmark-size); /* for perfect pixel requirement */
+}
+
+.accordion__xmark::after {
+	/* width: 50%; */
+	width: var(--xmark-size); /* for perfect pixel requirement */
+	height: 2px;
+}
+
+/* css for items in open block and closed blocks -- start */
+.accordion__xmark--open::before,
+.accordion__xmark--open::after {
+	transform: translate(-50%, -50%) rotate(45deg) scale(1.175);
+}
+
+.accordion__text--open {
+	/* line-height: 22px; */
+	line-height: var(
+		--open-text-line-height
+	); /* for perfect pixel requirement */
+	visibility: visible;
+	opacity: 1;
+}
+
+.accordion__block:has(.accordion__text--open) {
+	row-gap: 16px;
+}
+/* css for items in open block and closed blocks -- end */
