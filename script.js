@@ -15,6 +15,8 @@ const blocksData = [
 const classNames = {
 	containerClass: "accordion",
 	blockClass: "accordion__block",
+	headerClass: "accordion__header",
+	titleClass: "accordion__title",
 	xmarkClass: "accordion__xmark",
 	textClass: "accordion__text",
 	xmarkOpenClass: "accordion__xmark--open",
@@ -39,31 +41,45 @@ function init() {
 	// insertAdjacentHTML is faster than innerHTML
 	accordion.insertAdjacentHTML("beforeend", blocksElementStr);
 
-	// use EventListener at xmark button instead of onclick for better performance and scalable
+	// calculate correct max height of each text, and set it to inline style variable
+	calculateTextMaxHeight();
+
+	// use click EventListener at header (or xmark button) instead of onclick for better performance and scalable
 	accordion.addEventListener("click", (event) => {
-		const btn = event.target.closest("." + classNames.xmarkClass);
-		if (!btn || !accordion.children) return;
-		const block = btn.closest("." + classNames.blockClass);
-		const index = [...accordion.children].indexOf(block);
-		toggleBlock(index);
+		// click at xmark button
+		// const btn = event.target.closest("." + classNames.xmarkClass);
+		// if (!btn || !accordion.children) return;
+		// const block = btn.closest("." + classNames.blockClass);
+
+		// click at block, but not text param section
+		const text = event.target.closest('.' + classNames.textClass);
+		if (!text) {
+			const block = event.target.closest('.' + classNames.blockClass);
+			const index = [...accordion.children].indexOf(block);
+			toggleBlock(index);
+		}
 	});
 }
 
 function createBlock(blockData, ind) {
 	const isOpen = openBlockIndex === ind;
 	return `
-		<div class="accordion__block">
-			<div class="accordion__header">
-				<h3 class="accordion__title">${blockData.title + " " + (ind + 1)}</h3>
+		<div class="${classNames.blockClass}">
+			<div class="${classNames.headerClass}">
+				<h3 class="${classNames.titleClass}">${blockData.title + " " + (ind + 1)}</h3>
 				<button 
-					class="${classNames.xmarkClass} 
+					class="
+						${classNames.xmarkClass} 
 						${isOpen ? classNames.xmarkOpenClass : ""}
 					"
 				></button>
 			</div>
-			<p class="${classNames.textClass} 
-				${isOpen ? classNames.textOpenClass : ""}
-			">
+			<p 
+				class="
+					${classNames.textClass} 
+					${isOpen ? classNames.textOpenClass : ""}
+				"
+			>
 				${blockData.text}
 			</p>
 		</div>
@@ -106,4 +122,14 @@ function handleOpenBlock(element, xmarkOrText = openElementType.xmark) {
 
 function handleCloseBlock(element, xmarkOrText = openElementType.xmark) {
 	element.classList.remove(classNames[xmarkOrText + suffixOpenClassName]);
+}
+
+// calculate correct max height of each text, and set it to inline style variable
+function calculateTextMaxHeight() {
+	const texts = document.querySelectorAll('.' + classNames.textClass);
+	if (texts?.length) {
+		texts.forEach(textEle => {
+			textEle.style.setProperty('--max-height', textEle.scrollHeight + 'px');
+		})
+	}
 }

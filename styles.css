@@ -1,7 +1,7 @@
 :root {
 	/* fixed size variables for perfect pixel requirement */
 	--title-lh: 1.2; /* 18px * 1.2 = 21.6px */
-	--open-text-lh: 1.4; /* 16px * 1.4 = 22.4px */
+	--text-lh: 1.4; /* 16px * 1.4 = 22.4px */
 	/* --xmark-size: 50%; */
 	--xmark-size: 12.63px;
 	--transition-duration: 0.4s;
@@ -68,8 +68,6 @@ button:hover {
 	background-color: #fff;
 	row-gap: 0;
 	will-change: row-gap;
-	transform: translateZ(0);
-	backface-visibility: hidden;
 	transition: row-gap var(--transition-duration) var(--transition-easing);
 }
 
@@ -90,15 +88,22 @@ button:hover {
 	font-weight: 400;
 	font-size: 16px;
 	color: #3c3c43;
-	line-height: 0;
+
+	/* use line-height, visibility, opacity */
+	/* line-height: 0;
 	visibility: hidden;
 	opacity: 0;
 	will-change: line-height, opacity, visibility;
-	transform: translateZ(0);
-	backface-visibility: hidden;
 	transition: line-height var(--transition-duration) var(--transition-easing),
 		opacity var(--transition-duration) var(--transition-easing),
-		visibility var(--transition-duration) var(--transition-easing);
+		visibility var(--transition-duration) var(--transition-easing); */
+
+	/* use max-height with overflow hidden */
+	line-height: var(--text-lh);
+	overflow: hidden;
+	max-height: 0px;
+	will-change: max-height;
+	transition: max-height var(--transition-duration) var(--transition-easing);
 }
 
 .accordion__xmark {
@@ -122,6 +127,8 @@ button:hover {
 	top: 50%;
 	left: 50%;
 	will-change: transform;
+	/* use translateZ(0) and backface-visibility: hidden 
+	help Enable GPU acceleration and Reduce unnecessary flickering or rendering */
 	transform: translateZ(0) translate(-50%, -50%);
 	backface-visibility: hidden;
 	transition: transform var(--transition-duration) var(--transition-easing);
@@ -142,13 +149,21 @@ button:hover {
 /* css for items in open block and closed blocks -- start */
 .accordion__xmark--open::before,
 .accordion__xmark--open::after {
-	transform: translate(-50%, -50%) rotate(45deg) scale(1.175);
+	transform: translateZ(0) translate(-50%, -50%) rotate(45deg) scale(1.175);
 }
 
 .accordion__text--open {
-	line-height: var(--open-text-lh);
+	/* use line-height, visibility, opacity */
+	/* line-height: var(--text-lh);
 	visibility: visible;
-	opacity: 1;
+	opacity: 1; */
+
+	/* use max-height with overflow hidden */
+	/* 1em (font-size) * line-height ratio => pixel of line-height * 2 (number of rows) => pixel of max-height */
+	/* max-height: calc(1em * var(--text-lh) * 2);  */
+	/* but in reality, the number of text rows is not fixed */
+	/* so I use JS to calculate correct max height of each text, and set it to inline style variable */
+	max-height: var(--max-height);
 }
 
 .accordion__block:has(.accordion__text--open) {
